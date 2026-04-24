@@ -1,0 +1,19 @@
+@import "tailwindcss";
+
+#mainDiv{
+    width:100%;
+}
+
+@keyframes cart-pop {
+  0% { transform: scale(1); }
+  50% { transform: scale(0.9); }
+  100% { transform: scale(1); }
+}
+
+.animate-cart-pop {
+  animation: cart-pop 0.3s ease-in-out;
+}
+
+.btn-added {
+  background-color: #10b981 !important; /* Green color for success */
+}
