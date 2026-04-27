@@ -61,7 +61,7 @@ function App() {
             </ProtectedRoute>
           }
         />
-      <Route path="/ProductOverView" element={<ProductOverView />} />
+      <Route path="/ProductOverView/:id" element={<ProductOverView />} />
       </Routes>
     </BrowserRouter>
   )

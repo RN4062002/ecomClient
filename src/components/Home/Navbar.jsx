@@ -52,13 +52,20 @@ export default function Navbar() {
     }
   };
 
+  const isMounted = React.useRef(false);
+
   // Debounced search logic
   useEffect(() => {
+    if (!isMounted.current) {
+      isMounted.current = true;
+      return;
+    }
+
     const delayDebounceFn = setTimeout(() => {
       // If searchTerm is cleared, send empty search to show all products
       navigate("/ProductList", { state: { search: searchTerm.trim() } });
     }, 700);
-    
+
 
     return () => clearTimeout(delayDebounceFn);
   }, [searchTerm]);
@@ -85,9 +92,9 @@ export default function Navbar() {
             <div className="space-y-6 border-t border-gray-200 px-4 py-6">
               {categories.map((category) => (
                 <div key={category.categoryId} className="flow-root">
-                  <Link 
-                    to="/ProductList" 
-                    state={{ categoryId: category.categoryId }} 
+                  <Link
+                    to="/ProductList"
+                    state={{ categoryId: category.categoryId }}
                     className="-m-2 block p-2 font-medium text-gray-900 hover:text-indigo-600"
                     onClick={() => setOpen(false)}
                   >
@@ -129,10 +136,10 @@ export default function Navbar() {
               </button>
 
               {/* Logo */}
-              <div className="ml-4 flex lg:ml-0">
+              <div className="ml-4 flex lg:ml-0 shrink-0">
                 <Link to="/" className="flex items-center">
-                  <img src="https://tailwindcss.com/plus-assets/img/logos/mark.svg?color=indigo&shade=600" alt="" className="h-8 w-auto" />
-                  <span className="ml-2 text-xl font-bold tracking-tight text-gray-900">E-Shop</span>
+                  <img src="https://tailwindcss.com/plus-assets/img/logos/mark.svg?color=indigo&shade=600" alt="" className="h-8 w-auto shrink-0" />
+                  <span className="ml-2 text-xl font-bold tracking-tight text-gray-900 hidden sm:block">E-Shop</span>
                 </Link>
               </div>
 
@@ -142,12 +149,12 @@ export default function Navbar() {
                   <Link to="/ProductList" className="text-sm font-medium text-gray-700 hover:text-indigo-600 transition-colors">
                     All Products
                   </Link>
-                  
+
                   {/* Quick Categories */}
                   {categories.slice(0, 4).map((category) => (
-                    <Link 
-                      key={category.categoryId} 
-                      to="/ProductList" 
+                    <Link
+                      key={category.categoryId}
+                      to="/ProductList"
                       state={{ categoryId: category.categoryId, categoryName: category.categoryName }}
                       className="text-sm font-medium text-gray-700 hover:text-indigo-600 transition-colors"
                     >
@@ -172,19 +179,23 @@ export default function Navbar() {
               </PopoverGroup>
             </div>
 
-            <div className="flex items-center space-x-6">
+            <div className="flex items-center space-x-2 md:space-x-4 lg:space-x-6">
               {/* Search */}
-              <div className="flex lg:ml-6">
+              <div className="flex lg:ml-6 shrink-0">
                 <form onSubmit={handleSearch} className="relative">
                   <input
                     type="text"
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    placeholder="Search products..."
-                    className="block w-full rounded-full border-0 py-1.5 pl-10 pr-3 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 transition-all w-32 focus:w-64"
+                    placeholder="Search..."
+                    className={`block rounded-full border-0 py-1.5 pl-9 pr-2 text-gray-900 ring-1 ring-inset transition-all duration-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 text-sm leading-6 outline-none ${
+                      searchTerm 
+                        ? 'w-32 md:w-48 lg:w-64 ring-gray-300 bg-white placeholder:text-gray-400' 
+                        : 'w-9 sm:w-10 ring-transparent bg-transparent placeholder:text-transparent cursor-pointer focus:cursor-text focus:w-32 md:focus:w-48 lg:focus:w-64 focus:ring-gray-300 focus:bg-white focus:placeholder:text-gray-400 hover:bg-gray-100'
+                    }`}
                   />
-                  <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                    <MagnifyingGlassIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
+                  <div className="absolute inset-y-0 left-0 flex items-center pl-2.5 sm:pl-3 pointer-events-none">
+                    <MagnifyingGlassIcon className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400" aria-hidden="true" />
                   </div>
                 </form>
               </div>
@@ -210,9 +221,9 @@ export default function Navbar() {
                 ) : (
                   <div className="flex items-center space-x-4">
                     <span className="text-sm text-gray-500 ">Hi, {user.UserName} </span>
-                    <button 
-                      onClick={logoutfn} 
-                      className="text-sm font-medium text-gray-700 hover:text-indigo-600" 
+                    <button
+                      onClick={logoutfn}
+                      className="text-sm font-medium text-gray-700 hover:text-indigo-600"
                     >
                       Logout
                     </button>

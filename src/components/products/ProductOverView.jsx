@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react'
 import { StarIcon, CheckIcon, ShieldCheckIcon, TruckIcon, ArrowPathIcon } from '@heroicons/react/20/solid'
 import { useCart } from '../../contexts/cartContext'
-import { useLocation, useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import Breadcrumbs from '../Items/Breadcrumbs';
 import { getCategoriesApi } from '../../api/categoryApi';
+import { getProductByIdApi } from '../../api/productApi';
 
 const IMAGE_BASE_URL = "https://localhost:7059/";
 
@@ -34,12 +35,41 @@ function ProductOverView() {
   const { addToCart } = useCart();
   const { state } = useLocation();
   const navigate = useNavigate();
-  const product = state?.product;
+  const { id } = useParams();
+  
+  const [product, setProduct] = useState(state?.product || null);
+  const [loading, setLoading] = useState(!state?.product);
   
   const [categoryName, setCategoryName] = useState("Category");
-  const images = product?.imageUrls?.map(url => `${IMAGE_BASE_URL}${url}`) || ["https://via.placeholder.com/600"];
-  const [selectedImage, setSelectedImage] = useState(images[0]);
+  const [selectedImage, setSelectedImage] = useState("https://via.placeholder.com/600");
   const [isAdding, setIsAdding] = useState(false);
+
+  useEffect(() => {
+    const fetchProduct = async () => {
+      if (!product && id) {
+        try {
+          const fetchedProduct = await getProductByIdApi(id);
+          setProduct(fetchedProduct);
+        } catch (error) {
+          console.error("Failed to fetch product:", error);
+        } finally {
+          setLoading(false);
+        }
+      } else {
+        setLoading(false);
+      }
+    };
+    fetchProduct();
+  }, [id, product]);
+
+  const images = product?.imageUrls?.map(url => `${IMAGE_BASE_URL}${url}`) || ["https://via.placeholder.com/600"];
+
+  useEffect(() => {
+    if (product) {
+      const imgs = product?.imageUrls?.map(url => `${IMAGE_BASE_URL}${url}`) || ["https://via.placeholder.com/600"];
+      setSelectedImage(imgs[0]);
+    }
+  }, [product]);
 
   useEffect(() => {
     const fetchCatName = async () => {
@@ -56,6 +86,10 @@ function ProductOverView() {
     }
     fetchCatName();
   }, [product]);
+
+  if (loading) {
+      return <div className="text-center py-20 text-gray-500">Loading...</div>;
+  }
 
   if (!product) {
       return <div className="text-center py-20 text-gray-500">Product not found.</div>;

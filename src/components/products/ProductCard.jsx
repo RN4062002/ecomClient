@@ -9,7 +9,7 @@ const ProductCard = ({ product }) => {
 
   const handleViewProduct = () => {
     debugger
-    navigate("/ProductOverView", { state: { product } });
+    navigate(`/ProductOverView/${product.productId}`, { state: { product } });
   };
   
   const imageUrl = product.imageUrls && product.imageUrls.length > 0 
