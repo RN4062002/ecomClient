@@ -9,7 +9,9 @@ const Login = () => {
     const location = useLocation();
     const from = location.state?.from?.pathname || "/";
     const [userName, setUserName] = useState('');
-    const [password, setPassword] = useState('');
+    const [password, setPassword] = useState(''); 
+    const [serverError, setServerError] = useState("");
+
 
     useEffect(() => {
         if (user) {
@@ -23,11 +25,18 @@ const Login = () => {
         }
     }, [user, navigate, from]);
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        const success = await login(userName, password);
-        if (success) {}
-    };
+const handleSubmit = async (e) => {
+    e.preventDefault();
+    setServerError("");
+
+    const result = await login(userName, password);
+
+    if (result.success) {
+        navigate("/dashboard"); // or wherever
+    } else {
+        setServerError(result.message); // "Invalid credentials"
+    }
+};
 
     return (
         <div className="login-container">
@@ -35,8 +44,10 @@ const Login = () => {
                 <div className="w-full max-w-md p-8 bg-white rounded-lg shadow-md">
                     <h2 className="mb-6 text-2xl font-bold text-center text-gray-800">Login</h2>
                     {loader && <Loader/>}
+                   
                     <form onSubmit={handleSubmit}>
                         <div className="mb-4">
+                             {serverError && (<div className="block mb-4 text-sm font-small text-gray-700" role="alert">⚠️ {serverError}</div>)}
                             <label htmlFor="email" className="block mb-2 text-sm font-medium text-gray-700">
                                 UserName
                             </label>

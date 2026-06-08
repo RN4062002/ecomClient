@@ -31,7 +31,7 @@ const Register = () => {
                 if (!formData.firstName.trim()) newErrors.firstName = 'Name is required';
                 if (!formData.lastName.trim()) newErrors.lastName = 'Last Name is required';
                 if (!formData.userName.trim()) newErrors.userName = 'Username is required';
-                if (!formData.email.trim()) newErrors.email = 'Em1ail is required';
+                if (!formData.email.trim()) newErrors.email = 'Email is required';
                 if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
                     newErrors.email = 'Invalid email format';
                 }
@@ -46,18 +46,35 @@ const Register = () => {
                 return Object.keys(newErrors).length === 0;
             };
         
+
+
             const handleSubmit = async (e) => {
-                e.preventDefault();
-               debugger
-                if (!validateForm()) return;
+                debugger
+                    e.preventDefault();
+                    setErrors("");
+
+                    if (!validateForm()) return;
+
+                    const result = await register(formData);
+
+                    if (result.success) {
+                        alert("User registered successfully");
+                        navigate("/login");
+                    } else {
+                        const msg = result.message;
+
+                        if (msg === "Username already exists") {
+                            setErrors({ userName: msg });
+
+                        } else if (msg === "User Email already exists") {
+                            
+                            setErrors({ email: msg });
+                        } else {
+                            setErrors({ server: msg }); 
+                        }
+                    }
+                };
             
-                const success =  await register(formData);
-            
-                if (success) {
-                    alert("User registered successfully");
-                    navigate("/login");
-                }
-            };
         
             return (
                 <div className="flex items-center justify-center min-h-screen bg-gray-100">
