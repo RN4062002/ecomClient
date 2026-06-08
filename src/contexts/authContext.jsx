@@ -19,6 +19,7 @@ export const AuthContextProvider = ({children}) =>{
 const register = async (formData) => {
     try 
     {
+        debugger
         const payload = 
         {
             firstName: formData.firstName,
@@ -28,8 +29,7 @@ const register = async (formData) => {
             password: formData.password
         };
         const res = await registerApi(payload);
-       
-        return { success: res.success };
+        return { success: true };
     } 
     catch (error) 
     {
